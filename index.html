@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <script src="jquery-3.0.0.js"></script>
+</head>
+<body>
+<div >
+    <button onclick='add("+obj.id+")'>增加</button>
+    <table border="1" cellpadding="0" cellspacing="0" id="tb">
+        <thead>
+            <th>序号</th>
+            <th>姓名</th>
+            <th>性别</th>
+            <th>年龄</th>
+            <th>地址</th>
+            <th>操作</th>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+<script>
+        var baseUrl ="http://sale.xj169.com/Json";  //http://sale.xj169.com/Json/json/get.do
+        $(function () {
+            initData();
+        });
+        
+        function  initData() {
+            $.ajax({
+                url:baseUrl+"/json/get.do",
+                type:"POST",
+                dataType:"JSON",
+                success:function (bigData) {
+                    var html ="";
+                    if(bigData.status =="0000"){
+                       for(var i= 0;i<bigData.data.length;i++){
+                            var obj = bigData.data[i];
+                            html +="<tr>";
+                           html +=" <td>"+obj.id+"</td>";
+                            html +=" <td>"+obj.name+"</td>";
+                            html +=" <td>"+handSex(obj.sex)+"</td>";
+                            html +="<td>"+obj.age+"</td>";
+                            html +=" <td>"+obj.address+"</td>";
+                            html +=" <td><a href='javascript:;' onclick='del("+obj.id+")'>删除</a></td>";
+                            html +=" </tr>";
+                       }
+                      $("#tb tbody").html("");
+                       $("#tb").append(html);
+                    }else{
+                        alert("获取数据失败");
+                    }
+                },
+                error:function () {
+
+                }
+                }
+            );
+        }
+        
+         function del(id) {
+            $.ajax({
+                url:baseUrl+"/json/delete.do",
+                type:"POST",
+                dataType:"JSON",
+                data:{"id":id},
+                success:function (obj) {
+                    initData();
+                },
+                error:function () {
+                    alert("fail");
+                }
+            });
+         }
+         
+         function handSex(sex) {
+            var sexHtml;
+             switch(sex) {
+                 case 1:
+                     sexHtml ='男'
+                     break;
+                 case 2:
+                     sexHtml ='女'
+                     break;
+                 default:
+                     sexHtml ='保密'
+             }
+             return sexHtml;
+         }
+         
+         function  add(id) {
+             $.ajax({
+                 url: baseUrl + "/json/add.do",
+                 type: "POST",
+                 dataType: "JSON",
+                 data: {"id":id},
+                 success: function (obj) {
+
+                 },
+                 error: function () {
+                     alert("fail");
+                 }
+                 });
+         }
+</script>
+</body>
+</html>
